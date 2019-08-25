@@ -97,12 +97,13 @@ get_course_analytics_data <- function(course_id, type = "assignments", user_id =
 
 #' @title Function to return various course items.
 #'
-#' @description Returns a data.frame of various course items. See "item" argument below. Omitting the "item argument
+#' @description Returns a data.frame of various course items. See "item" argument below. Omitting the "item" argument
 #' returns a course object.
 #'
 #' @param course_id A valid Canvas course id
-#' @param item Optional -- one of "settings", "discussion_topics", "todo", "enrollments", "features", "files", "modules", "front_page", "pages", "quizzes", "folders".
+#' @param item Optional -- one of "settings", "discussion_topics", "todo", "enrollments", "assignments", "features", "files", "modules", "front_page", "pages", "quizzes", "folders".
 #' @param include Optional additions to the query string
+#' @param extra.args Additional query parameters. The Canvas Live API shows available query parameters for each item type.
 #' @return data frame
 #' @export
 #'
@@ -110,7 +111,8 @@ get_course_analytics_data <- function(course_id, type = "assignments", user_id =
 #' #' get_course_items(course_id = 20, item = "settings")
 #' #' get_course_items(course_id = 20, item = "enrollments")
 #' #' get_course_items(20, item = "users", include = "email")
-get_course_items <- function(course_id, item, include = NULL) {
+#' #' get_course_items(20, "assignments", extra.args = list(search_term = "Test"))
+get_course_items <- function(course_id, item, include = NULL, extra.args = NULL) {
   valid_items <- c("settings", "discussion_topics", "todo", "enrollments", "users", "students",
                    "features", "assignments", "files", "modules", "front_page", "pages", "quizzes",
                    "folders", "assignment_groups")
@@ -125,7 +127,8 @@ get_course_items <- function(course_id, item, include = NULL) {
   }
   args <- list(per_page = 100)
   include <- iter_args_list(include, "include[]")
-  args <- c(args, include)
+
+  args <- c(args, include, extra.args)
   process_response(url, args) %>%
     dplyr::mutate(course_id = course_id)
 }
