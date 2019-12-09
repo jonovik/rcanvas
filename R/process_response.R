@@ -17,12 +17,13 @@ process_response <- function(url, args) {
   df <- paginate(resp) %>%
     purrr::map(httr::content, "text") %>%
     purrr::map(jsonlite::fromJSON, flatten = TRUE)
-  df <- tryCatch({
-    df %>% purrr::map_df(purrr::flatten_df)
-  },
-  error = function(e) {
-    df %>% dplyr::bind_rows()
-  }
+
+  df <- tryCatch(
+    tryCatch(
+      df %>% purrr::map_df(purrr::flatten_df),
+      error = function(e) df %>% dplyr::bind_rows()
+    ),
+    error = function(e) df %>% purrr::map(unlist) %>% purrr::map_df(dplyr::bind_rows)
   )
   return(df)
 }

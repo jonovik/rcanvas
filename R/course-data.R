@@ -133,6 +133,22 @@ get_course_items <- function(course_id, item, include = NULL, extra.args = NULL)
     dplyr::mutate(course_id = course_id)
 }
 
+#' Get announcements for course
+#'
+#' @param course_id Course ID (integer)
+#' @param extra.args Query parameters, e.g. start_date, see Live API docs.
+#'
+#' @return List of announcements (each a list with 44 items)
+#' @export
+#'
+#' @examples
+#' #' ann <- get_announcements(4506, extra.args = list(start_date = "2018-09-01"))
+get_announcements <- function(course_id, extra.args = list()) {
+  urlx <- glue::glue("{rcanvas:::canvas_url()}/announcements")
+  extra.args <- modifyList(list(per_page = 100, context_codes = glue::glue("course_{course_id}")), extra.args)
+  rcanvas:::canvas_query(urlx, extra.args, type = "GET") %>% httr::content()
+}
+
 #' @importFrom magrittr %>%
 #' @title Search all courses
 #'
