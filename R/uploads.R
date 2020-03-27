@@ -141,6 +141,7 @@ create_course_assignment <- function(course_id, name, position = NULL, submissio
                   omit_from_final_grade = omit_from_final_grade,
                   quiz_lti = quiz_lti))
   names(args) <- sprintf("assignment[%s]", names(args))
-  invisible(canvas_query(url, args, "POST"))
+  a <- canvas_query(url, args, "POST")
   message(sprintf("Assignment %s created.", name))
+  invisible(a)
 }
