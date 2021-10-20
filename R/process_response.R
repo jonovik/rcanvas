@@ -52,11 +52,11 @@ process_response <- function(url, args) {
 paginate <- function(x, showProgress=T) {
   first_response <- list(x)
   stopifnot(httr::status_code(x) == 200) # OK status
-  pages <- httr::headers(x)$link
+  pages <- get_page(x, "first")
   if (is.null(pages)) return(first_response)
   should_continue <- TRUE
   inc <- 2
-  if (has_rel(pages, "last")) {
+  if (has_rel(httr::headers(x)$link, "last")) {
     last_page <- get_page(x, "last")
     n_pages <- readr::parse_number(stringr::str_extract(last_page, "page=[0-9]{1,}"))
     if (n_pages == 1) return(first_response)
