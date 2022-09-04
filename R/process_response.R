@@ -101,6 +101,7 @@ has_rel <- function(x, rel) {
 
 get_page <- function(resp, page) {
   pages <- resp$headers$link
+  if (is.null(pages)) return(NULL)
   url_pattern <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
   pages <- stringr::str_split(pages, ",")[[1]]
   url <- stringr::str_subset(pages, page)
